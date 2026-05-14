@@ -67,20 +67,13 @@ io.on('connection', async (socket) => {
         }
     });
 
-    // Oyuncu Hareket Ettiğinde
-    socket.on('player_move', (angle) => {
+    // Oyuncu Hareket Ettiğinde (Senkronizasyon İçin İstemciye Güveniyoruz)
+    socket.on('player_move', (cells) => {
         let p = players[socket.id];
         if(!p) return;
         
-        // Sunucu tarafı hareket hesaplamaları (Hile koruması)
-        p.cells.forEach(c => {
-            let speed = Math.max(1.0, 3.5 - (c.r / 300));
-            c.x += Math.cos(angle) * speed;
-            c.y += Math.sin(angle) * speed;
-            
-            c.x = Math.max(c.r, Math.min(WORLD_SIZE - c.r, c.x));
-            c.y = Math.max(c.r, Math.min(WORLD_SIZE - c.r, c.y));
-        });
+        // Direk istemciden gelen pozisyonları kaydet
+        p.cells = cells;
     });
 
     // Oyuncu Çıktığında
