@@ -14,10 +14,16 @@ const app = express();
 app.use(cors());
 const server = http.createServer(app);
 
+// Aktif oyuncu sayısı API'si (GameCard bileşeni bu endpoint'i çağırıyor)
+app.get('/api/stats', (req, res) => {
+    res.set('Cache-Control', 'public, max-age=10');
+    res.json({ players: Object.keys(players).length });
+});
+
 // Socket.io Ayarları
 const io = new Server(server, {
     cors: {
-        origin: "*", // Güvenlik için daha sonra 'https://oyunmabedi.netlify.app' olarak değiştir.
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
